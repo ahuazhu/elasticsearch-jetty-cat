@@ -179,8 +179,8 @@ public class JettyHttpServerTransportHandler extends AbstractHandler {
             addProperty(Cat.Context.CHILD, request.getHeader(Cat.Context.CHILD));
 
             addProperty(ORIGIN_URL, request.getRequestURI());
-            addProperty(CALLER_DOMAIN, request.getHeader("_catCallerDomain"));
-            addProperty(CALLER_METHOD, request.getHeader("_catCallerMethod"));
+            addProperty(CALLER_DOMAIN, request.getHeader(CALLER_DOMAIN));
+            addProperty(CALLER_METHOD, request.getHeader(CALLER_METHOD));
 
             String remoteIP = request.getRemoteAddr();
             addProperty(REMOTE_IP, remoteIP);
