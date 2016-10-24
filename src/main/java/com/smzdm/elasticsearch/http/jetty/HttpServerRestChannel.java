@@ -51,16 +51,22 @@ public class HttpServerRestChannel extends HttpChannel {
             resp.addHeader("Access-Control-Allow-Methods", "OPTIONS, HEAD, GET, POST, PUT, DELETE");
             resp.addHeader("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, Content-Length");
         }
+        ServletOutputStream out = null;
         try {
             int contentLength = response.content().length();
             resp.setContentLength(contentLength);
-            ServletOutputStream out = resp.getOutputStream();
+            out = resp.getOutputStream();
             response.content().writeTo(out);
-            // TODO: close in a finally?
-            out.close();
         } catch (IOException e) {
             sendFailure = e;
         } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    //ignore
+                }
+            }
             latch.countDown();
         }
      }
