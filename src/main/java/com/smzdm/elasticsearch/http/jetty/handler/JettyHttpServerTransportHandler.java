@@ -95,11 +95,11 @@ public class JettyHttpServerTransportHandler extends AbstractHandler {
 
     private Transaction logCatTransaction(Context ctx) {
         Transaction t = null;
-        String url = ctx.getProperty(Context.ORIGIN_URL);
+        String uri = ctx.getProperty(Context.ORIGIN_URL);
 
-        if (StringUtils.isBlank(url)) {
-            url = "/";
-            ctx.addProperty(Context.ORIGIN_URL, url);
+        if (StringUtils.isBlank(uri)) {
+            uri = "/";
+            ctx.addProperty(Context.ORIGIN_URL, uri);
         }
         if (StringUtils.isNotBlank(ctx.getProperty(Context.CALLER_DOMAIN))
                 && StringUtils.isNotBlank(ctx.getProperty(Context.CALLER_METHOD))) {
@@ -110,17 +110,17 @@ public class JettyHttpServerTransportHandler extends AbstractHandler {
             ctx.getResponse().setHeader(Context.CAT_SERVER_DOMAIN, Cat.getManager().getDomain());
             ctx.getResponse().setHeader(Context.CAT_SERVER, NetworkInterfaceManager.INSTANCE.getLocalHostAddress());
 
-        } else if (url.contains("_search")) {
-            String name = simpleUrl(url);
+        } else if (uri.contains("_search")) {
+            String name = simpleUrl(uri);
             t = Cat.newTransaction("URL", name);
-        } else if (url.startsWith("/_")) {
-            String name = simpleUrl(url);
+        } else if (uri.startsWith("/_")) {
+            String name = simpleUrl(uri);
             t = Cat.newTransaction("ES", name);
         } else {
-            String name = simpleUrl(url);
+            String name = simpleUrl(uri);
             t = Cat.newTransaction("Index", name);
         }
-        t.addData(url);
+        t.addData(uri + (ctx.getRequest().getQueryString() == null ? "" : "?" + ctx.getRequest().getQueryString()));
         Cat.logRemoteCallServer(ctx);
 
         return t;
